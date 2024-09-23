@@ -1,3 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Entornos virtuales
 venv/
-.env
-config.py
+ENV/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# Archivos de configuración de IDEs
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de configuración de pruebas
+.coverage
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Archivos de base de datos
+*.sqlite3
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
