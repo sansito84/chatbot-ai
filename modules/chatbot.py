@@ -36,27 +36,78 @@ class GeminiChatbot:
         # Definir el contexto basado en tu experiencia
         context = {
             "experiencia_laboral": [
-                "Cuento con dos años de experiencia en programación, desarrollo y diseño de aplicaciones web"
-                "Trabajé en Covery Tech S.A. como CTO y Developer de febrero de 2022 a febrero de 2024.",
-                "Participé en proyectos como Yendo.ar utilizando Node.js."
+                {
+                    "puesto": "Full-stack Developer y DevOps",
+                    "empresa": "Freelance",
+                    "periodo": "Feb 2024 - Actualidad",
+                    "responsabilidades": [
+                        "Desarrollo de soluciones full-stack con Node.js, React.js, Python y MySQL.",
+                        "Automatización de procesos con Docker, Kubernetes y Nginx.",
+                        "Uso de modelos de lenguaje (LLMs) para mejorar funcionalidades en aplicaciones de procesamiento de lenguaje natural."
+                    ]
+                },
+                {
+                    "puesto": "Full-stack Developer y DevOps",
+                    "empresa": "Covery Tech S.A.",
+                    "periodo": "Feb 2022 - Feb 2024",
+                    "responsabilidades": [
+                        "Desarrollo de software para la gestión de ventas de seguros online.",
+                        "Implementación de soluciones full-stack con Node.js, React.js y MySQL.",
+                        "Automatización de procesos con PM2 y Nginx."
+                    ]
+                },
+                {
+                    "puesto": "Full-stack Developer y DevOps",
+                    "empresa": "Yendo.ar",
+                    "periodo": "Dic 2022 - Sept 2023",
+                    "responsabilidades": [
+                        "Desarrollo de aplicación web tipo CRUD para negocios y emprendimientos.",
+                        "Implementación de pasarelas de pago y autogestión de perfiles de usuarios."
+                    ]
+                },
+                {
+                    "puesto": "Fundador y CEO",
+                    "empresa": "Aladelta Muebles de Autor",
+                    "periodo": "Ene 2012 - Ene 2022",
+                    "responsabilidades": [
+                        "Diseño y armado de muebles personalizados.",
+                        "Implementación de soluciones CAD-CAM."
+                    ]
+                }
             ],
             "skills": [
-                "Programación en JavaScript, Python.",
-                "Uso de herramientas como Express, React, y MySQL.",
-                "Experiencia con PM2 y servidores en AWS y GCP."
+                "JavaScript", "Node.js", "Express.js", "React.js", "Next.js", "Python", 
+                "Docker", "Kubernetes", "MySQL", "MongoDB", "Linux", "Git", "CI/CD"
             ],
             "soft_skills": [
                 "Habilidades interpersonales y de comunicación.",
                 "Capacidad para trabajar en equipo y liderar proyectos.",
-                "Organización y gestión de tiempo."
+                "Organización y gestión de tiempo.",
+                "Aprendizaje continuo"
             ],
             "estudios": [
-                "Formación en programación con Python y Flask.",
-                "Conocimientos en desarrollo web y administración de servidores."
+                {
+                    "institución": "OpenBootcamp",
+                    "curso": "TypeScript",
+                    "periodo": "Sept 2024 - Oct 2024"
+                },
+                {
+                    "institución": "Codo a Codo 4.0",
+                    "curso": "Desarrollador Fullstack Python",
+                    "periodo": "Feb 2024 - Jul 2024"
+                },
+                {
+                    "institución": "Codo a Codo 4.0",
+                    "curso": "Desarrollador FullStack JS",
+                    "periodo": "Feb 2023 - Jul 2023"
+                }
             ],
             "contacto": {
-                "email": "santiago@example.com",  # Reemplaza con tu correo real
-                "whatsapp": "https://wa.me/3442453430"  # Reemplaza con tu enlace de WhatsApp real
+                "email": "santiagosito@gmail.com",
+                "whatsapp": "https://wa.me/3442453430",
+                "GitHub": "https://github.com/sansito84",
+                "LinkedIn": "https://www.linkedin.com/in/santiagosito",
+                "sitio_web": "https://endearing-faloodeh-1fe71b.netlify.app/"  # Reemplaza con tu enlace de WhatsApp real
             }
         }
         return context
