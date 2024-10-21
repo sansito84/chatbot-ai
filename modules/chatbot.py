@@ -115,10 +115,14 @@ class GeminiChatbot:
     def create_prompt(self, question):
         # Crear un prompt que incluye el contexto, el rol del asistente, y la pregunta
         context_text = "\n".join([
-            f"Mi experiencia laboral incluye: {', '.join(self.context['experiencia_laboral'])}.",
-            f"Mis habilidades son: {', '.join(self.context['skills'])}.",
-            f"Mis habilidades blandas incluyen: {', '.join(self.context['soft_skills'])}.",
-            f"He estudiado: {', '.join(self.context['estudios'])}.",
+            "Mi experiencia laboral incluye: " + ", ".join(
+                [f"{exp['puesto']} en {exp['empresa']} ({exp['periodo']})" for exp in self.context['experiencia_laboral']]
+            ) + ".",
+            "Mis habilidades son: " + ", ".join(self.context['skills']) + ".",
+            "Mis habilidades blandas incluyen: " + ", ".join(self.context['soft_skills']) + ".",
+            "He estudiado: " + ", ".join(
+                [f"{edu['curso']} en {edu['institución']} ({edu['periodo']})" for edu in self.context['estudios']]
+            ) + ".",
             f"Puedes contactarme por correo electrónico a {self.context['contacto']['email']} o a través de WhatsApp en {self.context['contacto']['whatsapp']}."
         ])
         
