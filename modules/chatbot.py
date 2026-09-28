@@ -27,7 +27,10 @@ MENU = [
      "¿Qué tecnologías maneja Santiago?"),
     ("📬 Contactarlo",
      "¿Cómo puedo contactar a Santiago?"),
+    # Sin pregunta: se responde sin llamar a Gemini, pidiendo que escriba su consulta
+    ("✍️ Otra cosa (escribí tu consulta)", None),
 ]
+OTRA_COSA = "<p>¡Dale! Escribí tu consulta y te respondo 😊</p>"
 OPCIONES = (
     "<p>¿Qué necesitás? Respondé con el número:</p><ol>"
     + "".join(f"<li>{texto}</li>" for texto, _ in MENU)
@@ -60,7 +63,13 @@ class GeminiChatbot:
             "- Si el dato no está en la información, dilo en una frase y ofrece su contacto. Nunca inventes experiencia, precios ni disponibilidad.\n"
             "- Preséntate únicamente si el usuario solo saluda o pregunta quién eres: en una oración, "
             "seguida exactamente de este menú: " + OPCIONES + "\n"
-            "- No termines cada respuesta con una pregunta. Ofrece el contacto solo si necesitan un servicio, "
+            "- Si el usuario se refiere a una opción del menú por su número (por ejemplo \"la 3\"), "
+            "responde a la pregunta correspondiente:\n"
+            + "".join(
+                f"  {n}. {pregunta or 'Pídele que escriba su consulta.'}\n"
+                for n, (_, pregunta) in enumerate(MENU, start=1)
+            )
+            + "- No termines cada respuesta con una pregunta. Ofrece el contacto solo si necesitan un servicio, "
             "preguntan cómo contratarlo o contactarlo, o si no tienes el dato.\n"
             "- Si preguntan algo ajeno a Santiago y su trabajo, indica en una frase que solo puedes responder sobre él.\n"
             "- Responde en el idioma del usuario, con tono profesional y cercano.\n"
@@ -236,7 +245,10 @@ class GeminiChatbot:
         # Si eligió una opción del menú, preguntar por ese tema
         opcion = OPCION_ELEGIDA.fullmatch(question)
         if opcion and 1 <= int(opcion.group(1)) <= len(MENU):
-            question = MENU[int(opcion.group(1)) - 1][1]
+            pregunta = MENU[int(opcion.group(1)) - 1][1]
+            if pregunta is None:
+                return OTRA_COSA
+            question = pregunta
 
         # Enviar la pregunta a la conversación de este usuario
         chat = self.get_chat(session_id)
