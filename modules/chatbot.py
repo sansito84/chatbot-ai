@@ -13,10 +13,33 @@ DEFAULT_MODEL = "gemini-3.8-flash"
 MAX_SESSIONS = 500
 SESSION_TTL_SECONDS = 60 * 60
 
+# Menú que el bot ofrece al presentarse: (texto de la opción, pregunta que se le envía a Gemini)
+MENU = [
+    ("🌐 Necesito una web o un sistema a medida",
+     "Necesito una web o un sistema a medida. ¿Cómo me puede ayudar Santiago y qué experiencia tiene en eso?"),
+    ("🤖 Quiero un chatbot o automatizar algo con IA",
+     "Quiero un chatbot o automatizar procesos con IA. ¿Qué puede hacer Santiago y qué experiencia tiene en eso?"),
+    ("⚙️ Necesito ayuda con servidores o despliegues (DevOps)",
+     "Necesito ayuda con servidores, despliegues o infraestructura (DevOps). ¿Qué experiencia tiene Santiago en eso?"),
+    ("💼 Conocer su experiencia laboral",
+     "¿Cuál es la experiencia laboral de Santiago?"),
+    ("🛠️ Ver las tecnologías que maneja",
+     "¿Qué tecnologías maneja Santiago?"),
+    ("📬 Contactarlo",
+     "¿Cómo puedo contactar a Santiago?"),
+]
+OPCIONES = (
+    "<p>¿Qué necesitás? Respondé con el número:</p><ol>"
+    + "".join(f"<li>{texto}</li>" for texto, _ in MENU)
+    + "</ol>"
+)
+# Un mensaje que es solo un número del menú ("2", "2.", "opción 2")
+OPCION_ELEGIDA = re.compile(r"\s*(?:opci[oó]n\s*)?(\d+)\s*[.)!]?\s*", re.IGNORECASE)
+
 # Chistes para cuando el mensaje es solo un saludo (se responden sin llamar a Gemini)
 DISCULPA = (
     "<p>…Perdón, perdón 😅 Se me cruzaron los cables. "
-    "Soy AmikBot, el asistente de Santiago. ¿Qué querés saber de él?</p>"
+    "Soy AmikBot, el asistente de Santiago.</p>" + OPCIONES
 )
 CHISTES_SALUDO = [
     (re.compile(r"h+o+l+a+s*"), "<p><del>Con su nariz, mis bolas.</del></p>" + DISCULPA),
@@ -35,8 +58,10 @@ class GeminiChatbot:
             "- Sé breve: 1 a 3 oraciones (máximo 50 palabras). Usa una lista solo si piden enumerar algo.\n"
             "- Habla de Santiago en tercera persona y usa datos concretos (empresas, fechas, tecnologías) de la información de abajo.\n"
             "- Si el dato no está en la información, dilo en una frase y ofrece su contacto. Nunca inventes experiencia, precios ni disponibilidad.\n"
-            "- Preséntate en una sola oración únicamente si el usuario solo saluda o pregunta quién eres.\n"
-            "- No termines cada respuesta con una pregunta. Ofrece el contacto solo si preguntan cómo contratarlo o contactarlo, o si no tienes el dato.\n"
+            "- Preséntate únicamente si el usuario solo saluda o pregunta quién eres: en una oración, "
+            "seguida exactamente de este menú: " + OPCIONES + "\n"
+            "- No termines cada respuesta con una pregunta. Ofrece el contacto solo si necesitan un servicio, "
+            "preguntan cómo contratarlo o contactarlo, o si no tienes el dato.\n"
             "- Si preguntan algo ajeno a Santiago y su trabajo, indica en una frase que solo puedes responder sobre él.\n"
             "- Responde en el idioma del usuario, con tono profesional y cercano.\n"
             "- Formato: HTML simple (<p>, <ul>, <li>, <strong>, <a href>), sin títulos ni encabezados.\n\n"
@@ -207,6 +232,11 @@ class GeminiChatbot:
         chiste = self.get_joke(question)
         if chiste:
             return chiste
+
+        # Si eligió una opción del menú, preguntar por ese tema
+        opcion = OPCION_ELEGIDA.fullmatch(question)
+        if opcion and 1 <= int(opcion.group(1)) <= len(MENU):
+            question = MENU[int(opcion.group(1)) - 1][1]
 
         # Enviar la pregunta a la conversación de este usuario
         chat = self.get_chat(session_id)
