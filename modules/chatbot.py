@@ -7,7 +7,7 @@ from google import genai
 from google.genai import types
 
 # Modelo configurable por variable de entorno para poder actualizarlo sin tocar código
-DEFAULT_MODEL = "gemini-2.5-flash"
+DEFAULT_MODEL = "gemini-3.8-flash"
 # Límite de conversaciones en memoria y tiempo de inactividad antes de descartarlas
 MAX_SESSIONS = 500
 SESSION_TTL_SECONDS = 60 * 60
@@ -44,9 +44,9 @@ class GeminiChatbot:
             temperature=0.8,  # Un poco de creatividad
             top_p=0.9,        # Diversidad controlada
             top_k=50,         # Opciones variadas
-            max_output_tokens=500,  # Limitar la longitud de la respuesta
-            # Sin "thinking" para que no consuma los tokens de la respuesta
-            thinking_config=types.ThinkingConfig(thinking_budget=0),
+            max_output_tokens=2048,  # Margen para el razonamiento; el largo lo limita el prompt
+            # Razonamiento bajo para responder rápido (modelos Gemini 3)
+            thinking_config=types.ThinkingConfig(thinking_level="low"),
         )
 
     def get_chat(self, session_id):
