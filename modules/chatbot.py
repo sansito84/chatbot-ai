@@ -17,13 +17,24 @@ class GeminiChatbot:
     def __init__(self):
         self.context = self.load_context()
         self.system_prompt = (
-            "Eres un asistente virtual avanzado creado con un LLM, "
-            "y tu nombre es AmikBot el Asistente Virtual desarrollado por Santiago Sito. "
-            "Debes hablar en nombre de Santiago Sito, ofrecer ayuda amigable "
-            "y mantener un tono profesional en todas tus respuestas siempre recordando que se le está hablando a un posible contratante o cliente. "
-            "Debes dar respuestas concisas, y cortas (no más de 50 palabras por respuesta) y brindar siempre invitacion al diálogo. "
-            "Tu presentación debes hacerla una sola vez por cada usuario. "
-            "Responde con formato HTML, siendo h3 los headers más grandes."
+            "Eres AmikBot, el asistente virtual del portfolio de Santiago Sito, desarrollador Full-stack y DevOps. "
+            "Quien te escribe suele ser un posible cliente o reclutador que quiere saber si Santiago le sirve.\n\n"
+            "Cómo responder:\n"
+            "- Contesta exactamente lo que te preguntan, en la primera oración. Sin saludos, rodeos ni repetir la pregunta.\n"
+            "- Sé breve: 1 a 3 oraciones (máximo 50 palabras). Usa una lista solo si piden enumerar algo.\n"
+            "- Habla de Santiago en tercera persona y usa datos concretos (empresas, fechas, tecnologías) de la información de abajo.\n"
+            "- Si el dato no está en la información, dilo en una frase y ofrece su contacto. Nunca inventes experiencia, precios ni disponibilidad.\n"
+            "- Preséntate en una sola oración únicamente si el usuario solo saluda o pregunta quién eres.\n"
+            "- No termines cada respuesta con una pregunta. Ofrece el contacto solo si preguntan cómo contratarlo o contactarlo, o si no tienes el dato.\n"
+            "- Si preguntan algo ajeno a Santiago y su trabajo, indica en una frase que solo puedes responder sobre él.\n"
+            "- Responde en el idioma del usuario, con tono profesional y cercano.\n"
+            "- Formato: HTML simple (<p>, <ul>, <li>, <strong>, <a href>), sin títulos ni encabezados.\n\n"
+            "Ejemplos:\n"
+            "Usuario: ¿Sabe Docker?\n"
+            "AmikBot: <p>Sí. Usa <strong>Docker y Kubernetes</strong> para automatizar despliegues en sus proyectos freelance desde 2024.</p>\n"
+            "Usuario: ¿Cuánto cobra?\n"
+            "AmikBot: <p>No tengo esa información; depende del proyecto. Puedes consultarle directamente a "
+            "<a href=\"mailto:santiagosito@gmail.com\">santiagosito@gmail.com</a>.</p>"
         )
         # Una conversación por usuario: session_id -> (chat, último uso)
         self.sessions = OrderedDict()
@@ -48,7 +59,7 @@ class GeminiChatbot:
         # Configuración del modelo
         self.generation_config = types.GenerateContentConfig(
             system_instruction=f"{self.system_prompt}\n\n{self.create_context_text()}",
-            temperature=0.8,  # Un poco de creatividad
+            temperature=0.4,  # Respuestas más precisas y consistentes
             top_p=0.9,        # Diversidad controlada
             top_k=50,         # Opciones variadas
             max_output_tokens=2048,  # Margen para el razonamiento; el largo lo limita el prompt
@@ -149,24 +160,29 @@ class GeminiChatbot:
                 "whatsapp": "https://wa.me/3442453430",
                 "GitHub": "https://github.com/sansito84",
                 "LinkedIn": "https://www.linkedin.com/in/santiagosito",
-                "sitio_web": "https://endearing-faloodeh-1fe71b.netlify.app/"  # Reemplaza con tu enlace de WhatsApp real
+                "sitio_web": "https://santiagosito.netlify.app/"
             }
         }
         return context
 
     def create_context_text(self):
         # Resumir el contexto como texto para las instrucciones del sistema
-        return "\n".join([
-            "Mi experiencia laboral incluye: " + ", ".join(
-                [f"{exp['puesto']} en {exp['empresa']} ({exp['periodo']})" for exp in self.context['experiencia_laboral']]
-            ) + ".",
-            "Mis habilidades son: " + ", ".join(self.context['skills']) + ".",
-            "Mis habilidades blandas incluyen: " + ", ".join(self.context['soft_skills']) + ".",
-            "He estudiado: " + ", ".join(
-                [f"{edu['curso']} en {edu['institución']} ({edu['periodo']})" for edu in self.context['estudios']]
-            ) + ".",
-            f"Puedes contactarme por correo electrónico a {self.context['contacto']['email']} o a través de WhatsApp en {self.context['contacto']['whatsapp']}."
-        ])
+        experiencia = "\n".join(
+            f"- {exp['puesto']} en {exp['empresa']} ({exp['periodo']}): " + " ".join(exp['responsabilidades'])
+            for exp in self.context['experiencia_laboral']
+        )
+        estudios = "\n".join(
+            f"- {edu['curso']} en {edu['institución']} ({edu['periodo']})" for edu in self.context['estudios']
+        )
+        contacto = "\n".join(f"- {canal}: {valor}" for canal, valor in self.context['contacto'].items())
+        return (
+            "Información sobre Santiago Sito:\n\n"
+            f"Experiencia laboral:\n{experiencia}\n\n"
+            f"Habilidades técnicas: {', '.join(self.context['skills'])}.\n"
+            f"Habilidades blandas: {' '.join(self.context['soft_skills'])}\n\n"
+            f"Estudios:\n{estudios}\n\n"
+            f"Contacto:\n{contacto}"
+        )
 
     def get_response(self, question, session_id):
         # Enviar la pregunta a la conversación de este usuario
