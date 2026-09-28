@@ -7,7 +7,7 @@ AmikBot: API en Flask que responde preguntas sobre Santiago Sito usando Gemini.
 Variables de entorno:
 
 - `GEMINI_API_KEY` (o `API_KEY`): API key de Google AI Studio. **Obligatoria.**
-- `GEMINI_MODEL` (opcional): modelo a usar. Por defecto `gemini-2.5-flash`.
+- `GEMINI_MODEL` (opcional): modelo a usar. Por defecto `gemini-3.8-flash` (debe ser un modelo Gemini 3 o posterior).
 
 ## Uso
 
