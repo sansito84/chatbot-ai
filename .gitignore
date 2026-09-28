@@ -1,5 +1,4 @@
 # Python
-app/__pycache__/
 __pycache__/
 *.py[cod]
 *.pyo
@@ -39,5 +38,6 @@ coverage.xml
 *.tmp
 *.bak
 *.swp
-app/__pycache__/__init__.cpython-310.pyc
-app/__pycache__/chatbot.cpython-310.pyc
+
+# Variables de entorno (API keys)
+.env
