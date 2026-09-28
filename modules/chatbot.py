@@ -35,7 +35,14 @@ class GeminiChatbot:
         api_key = os.getenv("GEMINI_API_KEY") or os.getenv("API_KEY")
         if not api_key:
             raise RuntimeError("Falta la variable de entorno GEMINI_API_KEY (o API_KEY)")
-        self.client = genai.Client(api_key=api_key)
+        # Reintentar ante errores temporales de Google (429, 500, 503...),
+        # con esperas cortas para no superar el timeout de gunicorn (30 s)
+        self.client = genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(
+                retry_options=types.HttpRetryOptions(attempts=3, initial_delay=1, max_delay=4),
+            ),
+        )
         self.model = os.getenv("GEMINI_MODEL", DEFAULT_MODEL)
 
         # Configuración del modelo
