@@ -1,4 +1,5 @@
 import os
+import re
 import threading
 import time
 from collections import OrderedDict
@@ -11,6 +12,16 @@ DEFAULT_MODEL = "gemini-3.8-flash"
 # Límite de conversaciones en memoria y tiempo de inactividad antes de descartarlas
 MAX_SESSIONS = 500
 SESSION_TTL_SECONDS = 60 * 60
+
+# Chistes para cuando el mensaje es solo un saludo (se responden sin llamar a Gemini)
+DISCULPA = (
+    "<p>…Perdón, perdón 😅 Se me cruzaron los cables. "
+    "Soy AmikBot, el asistente de Santiago. ¿Qué querés saber de él?</p>"
+)
+CHISTES_SALUDO = [
+    (re.compile(r"h+o+l+a+s*"), "<p><del>Con su nariz, mis bolas.</del></p>" + DISCULPA),
+    (re.compile(r"b+u+e+n+a+s+"), "<p><del>Buenas las tenés vos.</del></p>" + DISCULPA),
+]
 
 
 class GeminiChatbot:
@@ -184,7 +195,19 @@ class GeminiChatbot:
             f"Contacto:\n{contacto}"
         )
 
+    def get_joke(self, question):
+        # Solo si el mensaje es únicamente el saludo (ignorando mayúsculas, signos y emojis)
+        saludo = re.sub(r"[^a-záéíóúüñ]", "", question.lower())
+        for patron, chiste in CHISTES_SALUDO:
+            if patron.fullmatch(saludo):
+                return chiste
+        return None
+
     def get_response(self, question, session_id):
+        chiste = self.get_joke(question)
+        if chiste:
+            return chiste
+
         # Enviar la pregunta a la conversación de este usuario
         chat = self.get_chat(session_id)
         response = chat.send_message(question)
