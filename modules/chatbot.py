@@ -14,9 +14,18 @@ MAX_SESSIONS = 500
 SESSION_TTL_SECONDS = 60 * 60
 
 # Chistes para cuando el mensaje es solo un saludo (se responden sin llamar a Gemini)
+# Temas que el bot ofrece al presentarse
+OPCIONES = (
+    "<ul>"
+    "<li>💼 Su experiencia laboral</li>"
+    "<li>🛠️ Las tecnologías que maneja</li>"
+    "<li>🎓 Sus estudios</li>"
+    "<li>📬 Cómo contactarlo</li>"
+    "</ul>"
+)
 DISCULPA = (
     "<p>…Perdón, perdón 😅 Se me cruzaron los cables. "
-    "Soy AmikBot, el asistente de Santiago. ¿Qué querés saber de él?</p>"
+    "Soy AmikBot, el asistente de Santiago. Puedo contarte sobre:</p>" + OPCIONES
 )
 CHISTES_SALUDO = [
     (re.compile(r"h+o+l+a+s*"), "<p><del>Con su nariz, mis bolas.</del></p>" + DISCULPA),
@@ -35,7 +44,8 @@ class GeminiChatbot:
             "- Sé breve: 1 a 3 oraciones (máximo 50 palabras). Usa una lista solo si piden enumerar algo.\n"
             "- Habla de Santiago en tercera persona y usa datos concretos (empresas, fechas, tecnologías) de la información de abajo.\n"
             "- Si el dato no está en la información, dilo en una frase y ofrece su contacto. Nunca inventes experiencia, precios ni disponibilidad.\n"
-            "- Preséntate en una sola oración únicamente si el usuario solo saluda o pregunta quién eres.\n"
+            "- Preséntate únicamente si el usuario solo saluda o pregunta quién eres: en una oración, "
+            "seguida de esta lista de temas sobre los que puede preguntar: " + OPCIONES + "\n"
             "- No termines cada respuesta con una pregunta. Ofrece el contacto solo si preguntan cómo contratarlo o contactarlo, o si no tienes el dato.\n"
             "- Si preguntan algo ajeno a Santiago y su trabajo, indica en una frase que solo puedes responder sobre él.\n"
             "- Responde en el idioma del usuario, con tono profesional y cercano.\n"
